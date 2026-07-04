@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>觀星者的預言冒險 - 最終版</title>
+    <style>
+        body {
+            background-color: #0d1b2a;
+            color: #e0e1dd;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #1b263b;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            width: 100%;
+            border: 1px solid #415a77;
+            margin-top: 10px;
+        }
+        h1, h2, h3 {
+            color: #f5cb5c;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .story-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            background-color: #0d1b2a;
+            padding: 15px;
+            border-left: 4px solid #f5cb5c;
+            border-radius: 4px;
+        }
+        .quote-text {
+            background-color: #2a3a5c;
+            padding: 12px;
+            border-radius: 6px;
+            font-style: italic;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: #eae2b7;
+        }
+        .map-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .map-btn {
+            padding: 18px;
+            background-color: #415a77;
+            color: #fff;
+            border: 2px solid #778da9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: left;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .map-btn.cleared {
+            background-color: #14213d;
+            border-color: #52b788;
+            color: #52b788;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #415a77;
+            background-color: #0d1b2a;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            text-align: center;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            outline: none;
+        }
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background-color: #f5cb5c;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hint {
+            color: #ff6b6b;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+        .success-response {
+            color: #52b788;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 0;
+            display: none;
+            background-color: #0d1b2a;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px dashed #52b788;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="screen-intro">
+        <h1>✨ 觀星者的預言 ✨</h1>
+        <div class="story-text">
+            觀星者呀，在這片大陸上有不同語言的研究者，都記載著這傳說故事。
+            時間不多了，尋找到這些人，破解且”記錄”這預言吧……
+        </div>
+        <button class="btn-action" onclick="toScreen('screen-map1')">進入命運的分岔路</button>
+    </div>
+
+    <div id="screen-map1" style="display: none;">
+        <h2>🧭 命運的分岔路</h2>
+        <div class="story-text" style="text-align: center;">
+            請破解四個國家研究者的預言歌詞：
+        </div>
+        <div class="map-grid">
+            <button id="btn-lv1" class="map-btn" onclick="enterLevel1(1)">1. 日文研究者</button>
+            <button id="btn-lv2" class="map-btn" onclick="enterLevel1(2)">2. 英文研究者</button>
+            <button id="btn-lv3" class="map-btn" onclick="enterLevel1(3)">3. 中文研究者</button>
+            <button id="btn-lv4" class="map-btn" onclick="enterLevel1(4)">4. 韓文研究者</button>
+        </div>
+    </div>
+
+    <div id="screen-level1" style="display: none;">
+        <h2 id="l1-title">關卡名稱</h2>
+        <div id="l1-story" class="story-text">故事內容</div>
+
+        <div class="story-text" style="text-align: center; background-color: #0d1b2a; font-weight: bold; border-left: none;">
+            🎵 題目歌詞：<br>
+            <span id="l1-question" style="color: #f5cb5c; font-size: 1.25rem;">題目內容</span>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="l1-answer" placeholder="請輸入對應的簡譜數字密碼" inputmode="numeric">
+        </div>
+
+        <div id="l1-success" class="success-response">正確回應文字</div>
+        <div id="l1-hint" class="hint">密碼不正確，星軌偏移了，再試一次吧！</div>
+
+        <button id="l1-submit" class="btn-action" onclick="verifyLevel1()">提交記錄</button>
+        <button id="l1-back" class="btn-action" style="background-color: #778da9; color: white; display:none;" onclick="toScreen('screen-map1')">返回地圖</button>
+    </div>
+
+    <div id="screen-intro2" style="display: none;">
+        <h1>👑 朝見的禮物</h1>
+        <div class="story-text">
+            解開了不同語言的謎題，要邁向朝聖之路了...
+            等等！我們的禮物呢？
+        </div>
+        <button class="btn-action" onclick="toScreen('screen-map2')">尋找朝見的禮物</button>
+    </div>
+
+    <div id="screen-map2" style="display: none;">
+        <h2>🎁 禮物收集進度</h2>
+        <div class="story-text" style="text-align: center;">
+            請前往各個區域協助遭遇困難的人，收集朝聖所需的珍貴禮品：
+        </div>
+        <div class="map-grid">
+            <button id="btn-gift1" class="map-btn" onclick="enterLevel2(1)">🎁 前往礦坑尋找【黃金】</button>
+            <button id="btn-gift2" class="map-btn" onclick="enterLevel2(2)">🎁 前往餐區尋找【乳香】</button>
+            <button id="btn-gift3" class="map-btn" onclick="enterLevel2(3)">🎁 前往商隊尋找【末藥】</button>
+        </div>
+        
+        <div id="combine-gate-zone" style="display: none; margin-top: 25px; border-top: 2px dashed #f5cb5c; padding-top: 20px;">
+            <h3>🔒 禮品合體大門</h3>
+            <div class="story-text">終於收集完禮品黃金、乳香、末藥了，它們上面神奇的密碼合起來是？</div>
+            <div class="input-group">
+                <input type="text" id="gate-answer" placeholder="請輸入合體後的完整密碼" inputmode="numeric">
+            </div>
+            <div id="gate-success" class="success-response">✨ 靜享天賜安眠 ✨</div>
+            <div id="gate-hint" class="hint">密碼不對，禮盒無法順利融合成力量...</div>
+            <button id="btn-gate-submit" class="btn-action" style="background-color: #52b788; color: white;" onclick="verifyGate()">解鎖終章大門</button>
+            <button id="btn-gate-next" class="btn-action" style="display: none;" onclick="toScreen('screen-final')">前進旅途終點 ➔</button>
+        </div>
+    </div>
+
+    <div id="screen-level2" style="display: none;">
+        <h2 id="l2-title">寶箱名稱</h2>
+        <div class="story-text">
+            <strong>【傳聞線索】</strong><br>
+            <span id="l2-story">文案</span>
+        </div>
+        
+        <div class="story-text" style="background-color: #2a3a5c; border-left: 4px solid #a2d2ff;">
+            <strong>💬 現場關主台詞：</strong><br>
+            <span id="l2-npc" style="color: #eae2b7;">NPC講話</span>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="l2-answer" placeholder="請輸入關主給予的密語數字" inputmode="numeric">
+        </div>
+
+        <div id="l2-success" class="success-response">🎉 成功獲得該項朝聖禮品！</div>
+        <div id="l2-hint" class="hint">密語不正確，無法開啟寶箱，請先完成關主交代的任務！</div>
+
+        <button id="l2-submit" class="btn-action" onclick="verifyLevel2()">提交密語</button>
+        <button id="l2-back" class="btn-action" style="background-color: #778da9; color: white; display:none;" onclick="toScreen('screen-map2')">返回地圖</button>
+    </div>
+
+    <div id="screen-final" style="display: none;">
+        <h1>🌅 旅途的終點</h1>
+        <div class="story-text">
+            尋尋覓覓找到了星，也預備好了珍貴的禮物。
+            終於，在馬槽裡看到了降生的彌賽亞……
+            週遭帶著寧靜祥和的氛圍。
+            
+            觀星者呀，你知道這一整段旅程中，星光給予我們的終極密碼是甚麼嗎？(提示：中文三個字)
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="final-answer" placeholder="請輸入中文三個字答案">
+        </div>
+
+        <div id="final-success" class="success-response" style="color: #f5cb5c; font-size: 1.3rem;">
+            🎉 終於完成所有旅程，讓我們回到大廳去，等候下一次的挑戰吧！！
+        </div>
+        <div id="final-hint" class="hint">彌賽亞靜靜看著你，這個詞彙似乎不夠寧靜，再想想看？</div>
+
+        <button id="final-submit" class="btn-action" style="background-color: #f5cb5c;" onclick="verifyFinal()">獻上最終預言密碼</button>
+    </div>
+
+</div>
+
+<script>
+    // --- 遊戲資料庫 ---
+    const stage1Data = {
+        1: { t: "第一關：平安的旋律(日)", s: "毛毛蟲般的文字，奇怪的對照表，甚麼意思?", q: "きよしこのよる", a: "5653", r: "✨ 平安夜 聖善夜 ✨" },
+        2: { t: "第二關：平安的旋律(英)", s: "這不是熟悉的ABC嗎", q: "All is calm, all is bright", a: "227115", r: "✨ 萬暗中 光華射 ✨" },
+        3: { t: "第三關：平安的旋律(國)", s: "這我熟!!", q: "ㄓㄠㄓㄜㄕㄥㄇㄨ…..", a: "661765653", r: "✨ 照著聖母也照著聖嬰 ✨" },
+        4: { t: "第四關：平安的旋律(韓)", s: "圈圈與線條組成的文字，這又是來自哪位研究者的手稿？", q: "아기 잘도 잔다", a: "661765653", r: "✨ 多少慈詳也多少天真 ✨" }
+    };
+
+    const stage2Data = {
+        1: { t: "黃金寶箱任務", s: "在礦坑有許多忙碌的工人，或許他們會挖到一些黃金", npc: "觀星者們呀，你們想要黃金?那就要附上你們的體力，這裡有個公平骰子，擲到多少，就搬運多少東西到對面去(回來)吧。\n\n【遊戲規則】每2人擲骰子決定搬運幾趟重物，完成後關主會給你密語盒子。\n(骰子對照：1、4=1趟 // 2、5=2趟 // 3、6=3趟)", a: "22" },
+        2: { t: "乳香寶箱任務", s: "在吃飯的地方，聽說奶品過剩，需要幫助?", npc: "觀星者們呀，一路奔波辛苦了，我這裡有些許乳品，可分給你們喝，但數量不太夠，請依照以下規則來完成。\n\n【遊戲規則】準備5個杯子與可爾必思，請5個人各自倒出不一樣高的飲料並按順序排列好。完成後由沒參與的學員喝掉，過關後給予密語罐。", a: "427" },
+        3: { t: "末藥寶箱任務", s: "旅途中，豆子商人好像遇到麻煩了，讓我們去幫幫他", npc: "觀星者們呀，我的豆子倒了，請協助我將豆子分類。\n\n【遊戲規則】現場預備3個杯子與三種混合的豆子，將豆子單獨分成每杯一種，完成後給予代表末藥的密語罐。", a: "13" }
+    };
+
+    // --- 狀態追蹤 ---
+    let clearedStage1 = new Set();
+    let clearedStage2 = new Set();
+    let curLevelId = null;
+
+    // --- 全域畫面切換功能 ---
+    function toScreen(id) {
+        document.getElementById('screen-intro').style.display = 'none';
+        document.getElementById('screen-map1').style.display = 'none';
+        document.getElementById('screen-level1').style.display = 'none';
+        document.getElementById('screen-intro2').style.display = 'none';
+        document.getElementById('screen-map2').style.display = 'none';
+        document.getElementById('screen-level2').style.display = 'none';
+        document.getElementById('screen-final').style.display = 'none';
+        
+        document.getElementById(id).style.display = 'block';
+
+        // 檢查第一階段全破時機
+        if (id === 'screen-map1' && clearedStage1.size === 4) {
+            setTimeout(() => { toScreen('screen-intro2'); }, 800);
+        }
+        
+        // 檢查第二階段三個寶箱全拿到的時機
+        if (id === 'screen-map2' && clearedStage2.size === 3) {
+            document.getElementById('combine-gate-zone').style.display = 'block';
+        }
+    }
+
+    // --- 第一階段控制 ---
+    function enterLevel1(id) {
+        if (clearedStage1.has(id)) return;
+        curLevelId = id;
+        const data = stage1Data[id];
+        
+        document.getElementById('l1-title').innerText = data.t;
+        document.getElementById('l1-story').innerText = data.s;
+        document.getElementById('l1-question').innerText = data.q;
+        document.getElementById('l1-success').innerText = data.r;
+        
+        document.getElementById('l1-answer').value = "";
+        document.getElementById('l1-answer').disabled = false;
+        document.getElementById('l1-hint').style.display = 'none';
+        document.getElementById('l1-success').style.display = 'none';
+        document.getElementById('l1-submit').style.display = 'block';
+        document.getElementById('l1-back').style.display = 'none';
+        toScreen('screen-level1');
+    }
+
+    function verifyLevel1() {
+        const ans = document.getElementById('l1-answer').value.replace(/\s+/g, '');
+        if (ans === stage1Data[curLevelId].a) {
+            document.getElementById('l1-hint').style.display = 'none';
+            document.getElementById('l1-success').style.display = 'block';
+            document.getElementById('l1-answer').disabled = true;
+            document.getElementById('l1-submit').style.display = 'none';
+            document.getElementById('l1-back').style.display = 'block';
+            
+            clearedStage1.add(curLevelId);
+            const btn = document.getElementById('btn-lv' + curLevelId);
+            btn.classList.add('cleared');
+            btn.innerText = "✓ " + btn.innerText.replace(/^\d\.\s/, '');
+        } else {
+            document.getElementById('l1-hint').style.display = 'block';
+        }
+    }
+
+    // --- 第二階段控制 ---
+    function enterLevel2(id) {
+        if (clearedStage2.has(id)) return;
+        curLevelId = id;
+        const data = stage2Data[id];
+        
+        document.getElementById('l2-title').innerText = data.t;
+        document.getElementById('l2-story').innerText = data.s;
+        document.getElementById('l2-npc').innerText = data.npc;
+        
+        document.getElementById('l2-answer').value = "";
+        document.getElementById('l2-answer').disabled = false;
+        document.getElementById('l2-hint').style.display = 'none';
+        document.getElementById('l2-success').style.display = 'none';
+        document.getElementById('l2-submit').style.display = 'block';
+        document.getElementById('l2-back').style.display = 'none';
+        toScreen('screen-level2');
+    }
+
+    function verifyLevel2() {
+        const ans = document.getElementById('l2-answer').value.replace(/\s+/g, '');
+        if (ans === stage2Data[curLevelId].a) {
+            document.getElementById('l2-hint').style.display = 'none';
+            document.getElementById('l2-success').style.display = 'block';
+            document.getElementById('l2-answer').disabled = true;
+            document.getElementById('l2-submit').style.display = 'none';
+            document.getElementById('l2-back').style.display = 'block';
+            
+            clearedStage2.add(curLevelId);
+            const btn = document.getElementById('btn-gift' + curLevelId);
+            btn.classList.add('cleared');
+            btn.innerText = "✓ 已收集" + btn.innerText.replace(/^🎁\s/, '').replace(/ 前往.*尋找/, '');
+        } else {
+            document.getElementById('l2-hint').style.display = 'block';
+        }
+    }
+
+    // --- 合體密碼大門驗證 ---
+    function verifyGate() {
+        const ans = document.getElementById('gate-answer').value.replace(/\s+/g, '');
+        if (ans === "2242713") {
+            document.getElementById('gate-hint').style.display = 'none';
+            document.getElementById('gate-success').style.display = 'block';
+            document.getElementById('gate-answer').disabled = true;
+            document.getElementById('btn-gate-submit').style.display = 'none';
+            document.getElementById('btn-gate-next').style.display = 'block';
+        } else {
+            document.getElementById('gate-hint').style.display = 'block';
+        }
+    }
+
+    // --- 🌅 終章密碼驗證 ---
+    function verifyFinal() {
+        const ans = document.getElementById('final-answer').value.replace(/\s+/g, '');
+        if (ans === "平安夜") {
+            document.getElementById('final-hint').style.display = 'none';
+            document.getElementById('final-success').style.display = 'block';
+            document.getElementById('final-answer').disabled = true;
+            document.getElementById('final-submit').style.display = 'none';
+        } else {
+            document.getElementById('final-hint').style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
